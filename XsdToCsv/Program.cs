@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Schema;
 
 namespace XsdToCsv
@@ -177,22 +178,39 @@ namespace XsdToCsv
             return csv;
         }
 
-        private static List<string> GetFacets(XmlSchemaElement element)
+        private static string GetDocumentation(XmlSchemaElement element)
         {
-            //(element.Annotation.Items[0] as XmlSchemaDocumentation).
-            //var simpleType = element.ElementSchemaType as XmlSchemaSimpleType;
-            //if (simpleType == null)
-            //    return null;
+            var doc = "";
 
-            //var restriction = simpleType.Content as XmlSchemaSimpleTypeRestriction;
-            //return restriction == null ? null : restriction.Facets.Cast<XmlSchemaFacet>().Where(x => x is XmlSchemaEnumerationFacet).Select(x => x.Value).ToList();
-            return new List<string>();
+            if (element.Annotation != null)
+            {
+                doc = element.Annotation.Items.OfType<XmlSchemaDocumentation>()
+                    .SelectMany(x => x.Markup)
+                    .Aggregate("", (c, n) => c + n.Value);
+                doc = Regex.Replace(doc, @"[\n+|\t+]", " ");
+                doc = Regex.Replace(doc, @"\s+", " ").Trim();
+            }
+
+            var simpleType = element.ElementSchemaType as XmlSchemaSimpleType;
+            if (simpleType == null)
+                return null;
+
+            var restriction = simpleType.Content as XmlSchemaSimpleTypeRestriction;
+            if (restriction != null && restriction.Facets.Cast<XmlSchemaFacet>().Any(x => x is XmlSchemaEnumerationFacet))
+            {
+                doc += " ENUMERATION: ";
+                doc += restriction.Facets.Cast<XmlSchemaFacet>()
+                    .Where(x => x is XmlSchemaEnumerationFacet).Select(x => x.Value).ToList()
+                    .Aggregate("", (c, n) => c + (string.IsNullOrWhiteSpace(c) ? "" : ", ") + n);
+            }
+
+            return doc.Trim();
         }
 
         private static string GetElementCsv(int level, XmlSchemaElement element)
         {
-            var facets = GetFacets(element).Aggregate("", (c, n) => c + (string.IsNullOrWhiteSpace(c) ? "" : ", ") + n);
-            var csv = BuildCsvLine(level, element.QualifiedName.Name, element.MinOccurs, element.MaxOccurs, element.ElementSchemaType.TypeCode.ToString(), facets);
+            var documentation = GetDocumentation(element);
+            var csv = BuildCsvLine(level, element.QualifiedName.Name, element.MinOccurs, element.MaxOccurs, element.ElementSchemaType.TypeCode.ToString(), documentation);
             return csv + GetComplexTypeCsv(level + 1, element.SchemaType);
         }
 
