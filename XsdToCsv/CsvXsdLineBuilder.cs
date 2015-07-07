@@ -16,7 +16,7 @@ namespace XsdToCsv
 
         public string BuildHeader()
         {
-            var headers = new[] { "Elementnaam", "Multi", "Type", "Omschrijving", "Voorbeeld" };
+            var headers = new[] { "Elementnaam", "Multi", "Type", "Omschrijving" };
             return headers.Aggregate("", (c, n) => c + (string.IsNullOrWhiteSpace(c) ? "" : _separator) + n) + "\n";
         }
 
@@ -28,12 +28,12 @@ namespace XsdToCsv
             var occurs = string.Format(format, strMinOccurs, strMaxOccures);
 
             name = string.Concat(Enumerable.Repeat(_indent, level)) + name;
-            return string.Format("{1}{0}{2}{0}{3}{0}{0}{4}\n", _separator, Quoted(name), Quoted(occurs), Quoted(typeName), example);
+            return string.Format("{1}{0}{2}{0}{3}{0}{4}\n", _separator, Quoted(name), Quoted(occurs), Quoted(typeName), Quoted(example));
         }
 
         private string Quoted(string value, string quote = "\"")
         {
-            return string.Format("{0}{1}{0}", quote, value);
+            return string.Format("{0}{1}{0}", string.IsNullOrEmpty(value) ? "" : quote, value);
         }
     }
 }

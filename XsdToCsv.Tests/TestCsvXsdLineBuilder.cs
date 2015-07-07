@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace XsdToCsv.Tests
@@ -17,7 +16,33 @@ namespace XsdToCsv.Tests
             var header = sut.BuildHeader();
 
             // Assert
-            header.ShouldBeEquivalentTo("Elementnaam;Multi;Type;Omschrijving;Voorbeeld\n");
+            header.ShouldBeEquivalentTo("Elementnaam;Multi;Type;Omschrijving\n");
+        }
+
+        [TestMethod]
+        public void BuildLine_PlacesFieldsInQuotesWhenNeeded()
+        {
+            // Arrange
+            var sut = new CsvXsdLineBuilder("  ", ";");
+
+            // Act
+            var line = sut.BuildLine(0, "name", 1, 1, "type");
+
+            // Assert
+            line.ShouldBeEquivalentTo("\"name\";\"1\";\"type\";\n");
+        }
+
+        [TestMethod]
+        public void BuildLine_Indents()
+        {
+            // Arrange
+            var sut = new CsvXsdLineBuilder("  ", ";");
+
+            // Act
+            var line = sut.BuildLine(2, "name", 1, 1, "type", "example");
+
+            // Assert
+            line.ShouldBeEquivalentTo("\"    name\";\"1\";\"type\";\"example\"\n");
         }
 
         [TestMethod]
@@ -27,10 +52,10 @@ namespace XsdToCsv.Tests
             var sut = new CsvXsdLineBuilder("  ", ";");
 
             // Act
-            var line = sut.BuildLine(0, "name", 1, 1, "type");
+            var line = sut.BuildLine(0, "name", 1, 1, "type", "example");
 
             // Assert
-            line.ShouldBeEquivalentTo("\"name\";\"1\";\"type\";;\n");
+            line.ShouldBeEquivalentTo("\"name\";\"1\";\"type\";\"example\"\n");
         }
 
         [TestMethod]
@@ -40,10 +65,10 @@ namespace XsdToCsv.Tests
             var sut = new CsvXsdLineBuilder("  ", ";");
 
             // Act
-            var line = sut.BuildLine(0, "name", 1, 2, "type");
+            var line = sut.BuildLine(0, "name", 1, 2, "type", "example");
 
             // Assert
-            line.ShouldBeEquivalentTo("\"name\";\"1..2\";\"type\";;\n");
+            line.ShouldBeEquivalentTo("\"name\";\"1..2\";\"type\";\"example\"\n");
         }
 
         [TestMethod]
@@ -53,10 +78,10 @@ namespace XsdToCsv.Tests
             var sut = new CsvXsdLineBuilder("  ", ";");
 
             // Act
-            var line = sut.BuildLine(0, "name", 1, Decimal.MaxValue, "type");
+            var line = sut.BuildLine(0, "name", 1, decimal.MaxValue, "type", "example");
 
             // Assert
-            line.ShouldBeEquivalentTo("\"name\";\"1..*\";\"type\";;\n");
+            line.ShouldBeEquivalentTo("\"name\";\"1..*\";\"type\";\"example\"\n");
         }
 
         [TestMethod]
@@ -66,10 +91,10 @@ namespace XsdToCsv.Tests
             var sut = new CsvXsdLineBuilder("  ", ";");
 
             // Act
-            var line = sut.BuildLine(0, "name", 0, Decimal.MaxValue, "type");
+            var line = sut.BuildLine(0, "name", 0, decimal.MaxValue, "type", "example");
 
             // Assert
-            line.ShouldBeEquivalentTo("\"name\";\"*\";\"type\";;\n");
+            line.ShouldBeEquivalentTo("\"name\";\"*\";\"type\";\"example\"\n");
         }
     }
 }
