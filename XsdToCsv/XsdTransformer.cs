@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using System.Xml.Schema;
 
 namespace XsdToCsv
@@ -18,6 +19,45 @@ namespace XsdToCsv
             _objectFinder = objectFinder;
             _lineBuidler = lineBuidler;
             _describedTypes = new Dictionary<string, XmlSchemaComplexType>();
+        }
+
+        public string TransformXml(XDocument document)
+        {
+            return _lineBuidler.BuildHeader() + TransformElement(0, document.Root);
+        }
+
+        private string TransformElement(int level, XElement element)
+        {
+            var info = element.GetSchemaInfo();
+
+            if (info == null)
+                return null;
+
+            var schemaElement = info.SchemaElement;
+            var minOccurs = schemaElement != null ? schemaElement.MinOccurs : 0;
+            var maxOccurs = schemaElement != null ? schemaElement.MaxOccurs : decimal.MaxValue;
+            var type = string.Empty;
+            var description = "";
+            var example = element.HasElements ? "" : element.Value;
+
+            if (schemaElement != null)
+            {
+                var complexType = schemaElement.ElementSchemaType as XmlSchemaComplexType;
+                type = complexType != null ? complexType.Name : schemaElement.ElementSchemaType.TypeCode.ToString();
+
+                var documentation = GetDocumentation(schemaElement);
+                if (string.IsNullOrWhiteSpace(documentation))
+                    description = example;
+                else
+                    description = documentation + (!documentation.Contains("ENUMERATION: ") ? " (EXAMPLE: " + example + ")" : "");
+            }
+
+            var line = _lineBuidler.BuildLine(level, element.Name.LocalName, minOccurs, maxOccurs, type, description);
+
+            foreach (var child in element.Elements())
+                line += TransformElement(level + 1, child);
+
+            return line;
         }
 
         public string TransformSchema(ICollection schemas, string objectName, string outputElement)

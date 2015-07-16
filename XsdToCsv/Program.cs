@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using System.Xml.Schema;
 using Autofac;
 
@@ -9,29 +10,28 @@ namespace XsdToCsv
 {
     internal class Program
     {
-        // XsdToCsv AfmeldenWerkorder.xsd AfmeldenWerkorderRequestType AfmeldenWerkorderRequest
+        // XsdToCsv AfmeldenWerkorder.xsd AfmeldenWerkorderRequest.xml
         private static void Main(string[] args)
         {
             if (!ValidateUsage(args))
                 return;
 
             var xsdPath = args[0];
-            var xmlObjectName = args[1];
-            var outputElement = args[2];
+            var xmlPath = args[1];
             var errorMessage = "";
 
             try
             {
                 var container = Bootstrapper.Configure();
                 var loader = container.Resolve<IXsdLoader>();
-                var schemas = loader.Load(xsdPath);
+                var document = loader.Load(xsdPath, xmlPath);
 
                 if (loader.GetValidationResult().Count(x => x.Key == XmlSeverityType.Error) > 0)
                     return;
 
                 var transformer = container.Resolve<IXsdTransformer>();
-                var result = transformer.TransformSchema(schemas, xmlObjectName, outputElement);
-                WriteCsv(outputElement + ".csv", result);
+                var result = transformer.TransformXml(document);
+                WriteCsv(document.Root, result);
             }
             catch (XsdFileNotFoundException)
             {
@@ -54,15 +54,17 @@ namespace XsdToCsv
 
         private static bool ValidateUsage(string[] args)
         {
-            if (args != null && args.Count() == 3)
+            if (args != null && args.Count() == 2)
                 return true;
 
-            Console.WriteLine("Usage: XsdToCsv <XsdPath> <SchemaType> <ElementName>");
+            Console.WriteLine("Usage: XsdToCsv <XsdPath> <XmlPath>");
             return false;
         }
 
-        private static void WriteCsv(string path, string csv)
+        private static void WriteCsv(XElement element, string csv)
         {
+            var path = element.Name.LocalName + ".csv";
+
             using (var writer = File.CreateText(path))
                 writer.Write(csv);
 

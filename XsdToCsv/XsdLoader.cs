@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Schema;
 
 namespace XsdToCsv
 {
     public interface IXsdLoader
     {
-        ICollection Load(string xsdPath);
+        XDocument Load(string xsdPath, string xmlPath);
 
         List<KeyValuePair<XmlSeverityType, string>> GetValidationResult();
     }
@@ -22,15 +23,22 @@ namespace XsdToCsv
             _validationResult = new List<KeyValuePair<XmlSeverityType, string>>();
         }
 
-        public ICollection Load(string xsdPath)
+        public XDocument Load(string xsdPath, string xmlPath)
         {
+            var settings = new XmlReaderSettings();
             var schema = LoadXmlSchema(xsdPath);
-            var schemaSet = new XmlSchemaSet();
-            schemaSet.ValidationEventHandler += ValidationEventHandler;
-            schemaSet.Add(schema);
-            schemaSet.Compile();
+            settings.Schemas.Add(schema); //("http://cdm.stedin.net/objecten/werkorder/afmelden", xsdPath);
+            settings.ValidationType = ValidationType.Schema;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
+            settings.ValidationEventHandler += ValidationEventHandler;
 
-            return schemaSet.Schemas();
+            var reader = XmlReader.Create(xmlPath, settings);
+            var document = XDocument.Load(reader, LoadOptions.SetBaseUri | LoadOptions.SetLineInfo);
+            document.Validate(settings.Schemas, ValidationEventHandler, true);
+
+            return document;
         }
 
         public List<KeyValuePair<XmlSeverityType, string>> GetValidationResult()
