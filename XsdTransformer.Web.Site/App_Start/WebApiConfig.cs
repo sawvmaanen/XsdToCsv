@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 
-namespace XsdToCsv.Web.Site
+namespace XsdTransformer.Web.Site
 {
     public static class WebApiConfig
     {

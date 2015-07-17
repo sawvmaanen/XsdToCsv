@@ -1,0 +1,637 @@
+<!-- @TODO 
+    Moet er meer dan een xs:element?
+    Specificeren van nieuw bestand en gecorrigeerd meter icm gas en elektra. Zou ook met een sequence kunnen.
+    Dan komt het maar een keer voor
+    
+    Meter is abstract gemaakt: zodat je altijd een gas of elektra meter moet kiezen
+     
+    - E-mail alphanumeric 241
+    - EAN 18
+    - LOV for land
+    - Stand van number naar alphanumeric voor voorloop nul ?
+    - typeMeter definieeren
+    - Verschil tussen alphanumeric en string
+    - Sommige dingen van de AansluitingsAttributen in elkaar klappen
+--><xs:schema targetNamespace="http://www.stedin.net/infrastructuur/dsl/cdm/1.0" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.stedin.net/infrastructuur/dsl/cdm/1.0" xmlns:tns="http://www.stedin.net/infrastructuur/dsl/cdm/1.0" xmlns:aaa="http://cdm.stedinmeetbedrijf.nl/attributen/aansluiting/1.0" xmlns:acm="http://cdm.stedinmeetbedrijf.nl/attributen/contactmedium/1.0" xmlns:age="http://cdm.stedinmeetbedrijf.nl/attributen/generiek/1.0" xmlns:ame="http://cdm.stedinmeetbedrijf.nl/attributen/meter/1.0" xmlns:ave="http://cdm.stedinmeetbedrijf.nl/attributen/verbruik/1.0" xmlns:app="http://cdm.stedinmeetbedrijf.nl/attributen/appointment/1.0" xmlns:ive="http://cdm.stedinmeetbedrijf.nl/infrastructuurverbruik/1.0">
+	<xs:import namespace="http://cdm.stedinmeetbedrijf.nl/attributen/aansluiting/1.0" schemaLocation="AansluitingAttributen.xsd"/>
+	<xs:import namespace="http://cdm.stedinmeetbedrijf.nl/attributen/contactmedium/1.0" schemaLocation="ContactMediumAttributen.xsd"/>
+	<xs:import namespace="http://cdm.stedinmeetbedrijf.nl/attributen/generiek/1.0" schemaLocation="GeneriekeAttributen.xsd"/>
+	<xs:import namespace="http://cdm.stedinmeetbedrijf.nl/attributen/meter/1.0" schemaLocation="MeterAttributen.xsd"/>
+	<xs:import namespace="http://cdm.stedinmeetbedrijf.nl/attributen/verbruik/1.0" schemaLocation="VerbruikAttributen.xsd"/>
+	<xs:import namespace="http://cdm.stedinmeetbedrijf.nl/infrastructuurverbruik/1.0" schemaLocation="InfrastructuurVerbruik.xsd"/>
+	<xs:import namespace="http://cdm.stedinmeetbedrijf.nl/attributen/appointment/1.0" schemaLocation="Appointment.xsd"/>
+	<xs:element name="Opdracht" type="tns:Opdracht"/>
+	<xs:element name="DeelOpdracht" type="tns:DeelOpdracht"/>
+	<xs:element name="Werkorder" type="tns:Werkorder"/>
+	<xs:complexType name="Opdracht">
+		<xs:sequence>
+			<xs:element name="opdrachtnummer" type="tns:string64"/>
+			<xs:element name="opdrachtStartDatum" type="xs:dateTime"/>
+			<xs:element name="opdrachtEindDatum" type="xs:dateTime"/>
+			<xs:element name="Omschrijving" type="xs:string"/>
+			<xs:element name="DeelOpdracht" type="tns:DeelOpdracht" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Werkorder" type="tns:Werkorder" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeelOpdracht">
+		<xs:sequence>
+			<xs:element name="deelOpdrachtNummer" type="xs:integer"/>
+			<xs:element name="deelOpdrachtStartDatum" type="xs:dateTime"/>
+			<xs:element name="deelOpdrachtEindDatum" type="xs:dateTime"/>
+			<xs:element name="Omschrijving" type="xs:string"/>
+			<xs:element name="identificatienummer" type="xs:int" minOccurs="0"/>
+			<xs:element name="indicatielangsopdrachtbeheer" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="indicatielangsplanner" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="Uitvoerder" type="tns:Uitvoerder" minOccurs="0"/>
+			<xs:element name="Werkorder" type="tns:Werkorder" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Uitvoerder">
+		<xs:sequence>
+			<xs:element name="naam" type="xs:string"/>
+			<xs:element name="UitvoerderTaakCode" type="tns:UitvoerderTaakCode" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UitvoerderTaakCode">
+		<xs:sequence>
+			<xs:element name="code" type="xs:string"/>
+			<xs:element name="omschrijving" type="xs:string" minOccurs="0"/>
+			<xs:element name="WerkType" type="tns:WerkType" minOccurs="0"/>
+			<xs:element name="DVOCode" type="tns:DVOCode"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DVOCode">
+		<xs:sequence>
+			<xs:element name="code" type="xs:string"/>
+			<xs:element name="omschrijving" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WerkType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:string"/>
+			<xs:element name="omschrijving" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Werkorder">
+		<xs:sequence>
+			<xs:element name="aanmaakdatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="briefStatus" type="xs:int" minOccurs="0"/>
+			<xs:element name="indicatieAkkoordMFE" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="jaaractiviteit" type="tns:string30" minOccurs="0"/>
+			<xs:element name="LocatieContactNaam" type="xs:string" minOccurs="0"/>
+			<xs:element name="opdrachtEinddatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="opdrachtStartdatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="opmerkingsveldPlannerMOKVB" type="tns:string300" minOccurs="0"/>
+			<xs:element name="resultaat" type="xs:string" minOccurs="0"/>
+			<xs:element name="statusWerkorder" type="xs:string"/>
+			<xs:element name="tijdslotEindtijd" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="tijdslotStarttijd" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="uitvoerderStatus" type="xs:string" minOccurs="0"/>
+			<xs:element name="uitvoeringsEindtijd" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="uitvoeringsStarttijd" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="volgnummer" type="xs:int"/>
+			<xs:element name="werkOrderNummer" type="tns:string64"/>
+			<xs:element name="redenStatusWijziging" type="xs:string" minOccurs="0"/>
+			<xs:element name="gebruikerLaatsteWijziging" type="xs:string" minOccurs="0"/>
+			<xs:element name="indiener" type="xs:string" minOccurs="0"/>
+			<xs:element name="indienerAfdeling" type="xs:string" minOccurs="0"/>
+			<xs:element name="indicatiesmsversturen" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="gewensteCapaciteitE" type="string64" minOccurs="0"/>
+			<xs:element name="gewensteCapaciteitG" type="string64" minOccurs="0"/>
+			<xs:element name="werkorderType" type="string64" minOccurs="0"/>
+			<xs:element name="UitvoerderTaakCode" type="tns:UitvoerderTaakCode" minOccurs="0"/>
+			<xs:element name="WerkType" type="tns:WerkType" minOccurs="0"/>
+			<xs:element name="Waarneming" type="tns:Waarneming" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Bevinding" type="tns:Bevinding" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Monteur" type="tns:Monteur" minOccurs="0"/>
+			<xs:element name="MeterBestaand" type="tns:Meter_NST" minOccurs="0"/>
+			<xs:element name="MeterGecorrigeerd" type="tns:Meter_NST" minOccurs="0"/>
+			<xs:element name="MeterNieuw" type="tns:Meter_NST" minOccurs="0"/>
+			<xs:element name="AfrondingMeteropname" type="tns:AfrondingMeteropname_NST" minOccurs="0"/>
+			<xs:element name="Correspondentieadres" type="tns:Correspondentieadres" minOccurs="0"/>
+			<xs:element name="EmailAdres" type="tns:Emailadres" minOccurs="0"/>
+			<xs:element name="Telefoonnummer" type="tns:Telefoonnummer" minOccurs="0"/>
+			<xs:element name="AansluitLocatie" type="tns:AansluitLocatie" minOccurs="0"/>
+			
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Monteur">
+		<xs:sequence>
+			<xs:element name="Naam" type="tns:string64" minOccurs="0"/>
+			<xs:element name="Type" type="tns:string64" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Bevinding">
+		<xs:sequence>
+			<xs:element name="bevinding1" type="tns:string64" minOccurs="0"/>
+			<xs:element name="bevinding2" type="tns:string64" minOccurs="0"/>
+			<xs:element name="bevindingOpmerking" type="tns:string300" minOccurs="0"/>
+			<xs:element name="bevindingsgroep" type="tns:string64" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Emailadres">
+		<xs:sequence>
+			<xs:element name="email" type="acm:email"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Telefoonnummer">
+		<xs:sequence>
+			<xs:element name="nummer" type="acm:telefoonnummer" minOccurs="0"/>
+			<xs:element name="externTelefoonnummer" type="tns:string100" minOccurs="0"/>
+			<xs:element name="mobieleTelefoonnummer" type="tns:string100" minOccurs="0"/>
+			<xs:element name="faxnummer" type="tns:string100" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Waarneming">
+		<xs:sequence>
+			<xs:element name="aangegevenMeetspanningIJkmeter" type="tns:string64" minOccurs="0"/>
+			<xs:element name="aselectSelect" type="tns:string64" minOccurs="0"/>
+			<xs:element name="bevindingenVolgensKEMA" type="tns:string64" minOccurs="0"/>
+			<xs:element name="eMeterOk" type="xs:boolean"/>
+			<xs:element name="eMeterOkVervolg" type="xs:boolean"/>
+			<xs:element name="geijktMeetsysteem" type="tns:string64" minOccurs="0"/>
+			<xs:element name="geleStickerGeplaatst" type="tns:string64" minOccurs="0"/>
+			<xs:element name="gMeterOk" type="xs:boolean"/>
+			<xs:element name="ijkmerk" type="tns:string64" minOccurs="0"/>
+			<xs:element name="ijkmerknummer" type="tns:string10" minOccurs="0"/>
+			<xs:element name="kenteken" type="tns:string64" minOccurs="0"/>
+			<xs:element name="linksMeetsysteemGecontroleerd" type="tns:string64" minOccurs="0"/>
+			<xs:element name="meterbegeleidingskaartIngevuld" type="tns:string64" minOccurs="0"/>
+			<xs:element name="meterwisseling" type="tns:string64" minOccurs="0"/>
+			<xs:element name="middenMeetsysteemGecontroleerd" type="tns:string64" minOccurs="0"/>
+			<xs:element name="overeenstemmingsmarkeringAanwezig" type="tns:string64" minOccurs="0"/>
+			<xs:element name="rechtsMeetsysteemGecontroleerd" type="tns:string64" minOccurs="0"/>
+			<xs:element name="representatief" type="tns:string64" minOccurs="0"/>
+			<xs:element name="rodeStickerGeplaatst" type="tns:string64" minOccurs="0"/>
+			<xs:element name="zegel" type="tns:string64" minOccurs="0"/>
+			<xs:element name="bevindingenAansluiting" type="string64" minOccurs="0"/>
+			<xs:element name="bevindingenMeterGegevens" type="string64" minOccurs="0"/>
+			<xs:element name="bevindingenNNEO" type="string64" minOccurs="0"/>
+			<xs:element name="bevindingenWO" type="string64" minOccurs="0"/>
+			<xs:element name="controledatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="controleInstallatie" type="xs:double" minOccurs="0"/>
+			<xs:element name="deltaPQMax" type="xs:double" minOccurs="0"/>
+			<xs:element name="foutIJkPunt0P2QMax" type="string64" minOccurs="0"/>
+			<xs:element name="foutIJkPuntQMax" type="string64" minOccurs="0"/>
+			<xs:element name="omgevingsTemperatuur" type="xs:double" minOccurs="0"/>
+			<xs:element name="afpersResultaat" type="string64" minOccurs="0"/>
+			<xs:element name="FaseWaarnemingen" type="FaseWaarneming" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FaseWaarneming">
+		<xs:sequence>
+			<xs:element name="aanloopInductie" type="tns:string64" minOccurs="0"/>
+			<xs:element name="doorlopendeInductie" type="tns:string64" minOccurs="0"/>
+			<xs:element name="foutIJkpuntInductie100prct" type="tns:string64" minOccurs="0"/>
+			<xs:element name="foutIJkpuntInductie10prct" type="tns:string64" minOccurs="0"/>
+			<xs:element name="foutIJkpuntstatisch0p5A" type="tns:string64" minOccurs="0"/>
+			<xs:element name="foutIJkpuntstatisch30A" type="tns:string64" minOccurs="0"/>
+			<xs:element name="foutIJkpuntStatisch30ACos0P5" type="string64" minOccurs="0"/>
+			<xs:element name="foutIJkpuntInom" type="string64" minOccurs="0"/>
+			<xs:element name="foutIJkpuntInomCos0P5" type="string64" minOccurs="0"/>
+			<xs:element name="typeMeter" type="string64" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Correspondentieadres">
+		<xs:complexContent>
+			<xs:extension base="tns:AdresOfPostbus"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AdresOfPostbus">
+		<xs:sequence>
+			<xs:element name="adrestoevoeging" type="acm:adrestoevoeging" minOccurs="0"/>
+			<xs:element name="land" type="acm:land" minOccurs="0"/>
+			<xs:element name="plaats" type="acm:woonplaats"/>
+			<xs:element name="straat" type="acm:straatnaam" minOccurs="0"/>
+			<xs:element name="huisnummer" type="acm:huisnummer" minOccurs="0"/>
+			<xs:element name="huisnummertoevoeging" type="acm:huisnummertoevoeging" minOccurs="0"/>
+			<xs:element name="postbusnummer" type="acm:postbusnummer" minOccurs="0"/>
+			<xs:element name="postcode" type="acm:postcode"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AfrondingMeteropname_NST">
+		<xs:sequence>
+			<xs:element name="afrondingMeteropname" type="tns:AfrondingMeteropname" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Meter_NST">
+		<xs:sequence>
+			<xs:element name="meter" type="tns:Meter" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Meter">
+		<xs:sequence>
+			<xs:element name="aantalTelwerken" type="age:getal1" minOccurs="0"/>
+			<xs:element name="bouwjaar" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="discriminator" type="tns:discriminator" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="eigenaar" type="tns:string35" minOccurs="0"/>
+			<xs:element name="einddatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="fabrikaat" type="xs:string" minOccurs="0"/>
+			<xs:element name="gekoppeldeMeter" type="age:indicatieJofN" minOccurs="0"/>
+			<xs:element name="hartAfstand" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="indicatieAkkoordMFE" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="maandVanControleopname" type="age:maandnummer" minOccurs="0"/>
+			<xs:element name="meterCode" type="tns:string5" minOccurs="0"/>
+			<xs:element name="meternummer" type="ame:meternummer" minOccurs="0"/>
+			<xs:element name="NTAversie" type="ame:NTAversie" minOccurs="0"/>
+			<xs:element name="plaatsAanduiding" type="tns:string60" minOccurs="0"/>
+			<xs:element name="redenUitvalMFE" type="tns:string255" minOccurs="0"/>
+			<xs:element name="revisieJaar" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="schakeldatumtijd" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="slimIndicator" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="soort" type="tns:string60" minOccurs="0"/>
+			<xs:element name="startdatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="status" type="ame:meterstatusTA" minOccurs="0"/>
+			<xs:element name="toonFrequentie" type="tns:string60" minOccurs="0"/>
+			<xs:element name="typeMeter" type="ame:typemeter" minOccurs="0"/>
+			<xs:element name="Aansluiting" type="tns:Aansluiting" minOccurs="0"/>
+			<xs:element name="Telwerk" type="tns:Telwerk" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Configuratie" type="tns:Configuratie" minOccurs="0"/>
+			<xs:element name="deelpopulatieCodering" type="age:indicatieJofN" minOccurs="0"/>
+			<xs:element name="zekeringswaardeElectra" type="tns:string64" minOccurs="0"/>
+			<xs:element name="metercapaciteit" type="tns:string64" minOccurs="0"/>
+			
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GasMeter">
+		<xs:complexContent>
+			<xs:extension base="tns:Meter">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ElektraMeter">
+		<xs:complexContent>
+			<xs:extension base="tns:Meter">
+				<xs:sequence>
+					<xs:element name="aanduidingDraaiveld" type="xs:integer" minOccurs="0"/>
+					<xs:element name="constante" type="xs:double" minOccurs="0"/>
+					<xs:element name="ibMax" type="tns:string20" minOccurs="0"/>
+					<xs:element name="onderGrondbovenGrond" type="xs:integer" minOccurs="0"/>
+					<xs:element name="spanning" type="tns:string64" minOccurs="0"/>
+					<xs:element name="zekeringswaarde" type="tns:string64" minOccurs="0"/>
+					<xs:element name="zekeringswaardeInRelatieKwhMeter" type="tns:string64" minOccurs="0"/>
+					<xs:element name="zekeringswaardeOk" type="tns:string64" minOccurs="0"/>
+					<xs:element name="gezekerdeFase" type="string64" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Configuratie">
+		<xs:sequence>
+			<xs:element name="code" type="xs:integer"/>
+			<xs:element name="soort" type="xs:string"/>
+			<xs:element name="omschrijving" type="tns:string60"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Telwerk">
+		<xs:sequence>
+			<xs:element name="aantalTelwielen" type="age:getal1" minOccurs="0"/>
+			<xs:element name="meeteenheid" type="age:meeteenheid" minOccurs="0"/>
+			<xs:element name="meetrichting" type="ame:meetrichting" minOccurs="0"/>
+			<xs:element name="positiesNaDeKomma" type="age:getal1" minOccurs="0"/>
+			<xs:element name="positiesVoorDeKomma" type="age:getal2" minOccurs="0"/>
+			<xs:element name="tariefzone" type="ame:tariefzone" minOccurs="0"/>
+			<xs:element name="telwerkidentificatie" type="ame:telwerkidentificatie"/>
+			<xs:element name="vermenigvuldigingsfactor" type="ame:vermenigvuldigingsfactor" minOccurs="0"/>
+			<xs:element name="Meterstand" type="tns:Meterstand" maxOccurs="unbounded"/>
+			<xs:element name="gebruik" type="tns:string3" minOccurs="0"/>
+			<xs:element name="medium" type="tns:string3" minOccurs="0"/>
+			<xs:element name="aanleiding" type="tns:string3" minOccurs="0"/>
+			<xs:element name="grootheidOmschrijving" type="tns:string60" minOccurs="0"/>
+			<xs:element name="standaardJaarverbruik" type="ame:stand" minOccurs="0"/>
+			<xs:element name="ondergrens" type="ame:stand" minOccurs="0"/>
+			<xs:element name="bovengrens" type="ame:stand" minOccurs="0"/>
+			<xs:element name="afleesvolgorde" type="xs:int" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Meterstand">
+		<xs:sequence>
+			<xs:element name="herkomstindicatie" type="ame:herkomstindicatie" minOccurs="0"/>
+			<xs:element name="opnamedatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="stand" type="ame:stand"/>
+			<xs:element name="Verbruik" type="tns:Verbruik" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Verbruik">
+		<xs:sequence>
+			<xs:element name="begindatum" type="xs:string"/>
+			<xs:element name="einddatum" type="xs:string"/>
+			<xs:element name="verbruikLeveringOffpeak" type="ave:verbruik" minOccurs="0"/>
+			<xs:element name="verbruikLeveringPeak" type="ave:verbruik"/>
+			<xs:element name="verbruikTerugleveringOffpeak" type="ave:verbruik" minOccurs="0"/>
+			<xs:element name="verbruikTerugleveringPeak" type="ave:verbruik" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Zegel">
+		<xs:sequence>
+			<xs:element name="zegelnummer" type="string16"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Asbest">
+		<xs:sequence>
+			<xs:element name="locatie" type="string255"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Aansluiting">
+		<xs:sequence>
+			<xs:element name="eancode" type="aaa:ean18"/>
+			<xs:element name="afrekenmaand" type="age:maandnummer" minOccurs="0"/>
+			<xs:element name="capaciteitstariefcode" type="aaa:capaciteitstariefcodeTA" minOccurs="0"/>
+			<xs:element name="contractcapaciteit" type="aaa:contractcapaciteitTA" minOccurs="0"/>
+			<xs:element name="einddatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="facturatiemodel" type="aaa:facturatiemodelTA" minOccurs="0"/>
+			<xs:element name="fysiekeCapaciteit" type="aaa:fysiekeCapaciteitTA" minOccurs="0"/>
+			<xs:element name="fysiekeStatus" type="aaa:fysiekeStatusTA" minOccurs="0"/>
+			<xs:element name="indicatieArtikel1Lid2ofLid3" type="age:indicatieJofN" minOccurs="0"/>
+			<xs:element name="indicatieVerblijfsfunctie" type="age:indicatieJofN" minOccurs="0"/>
+			<xs:element name="leveringsrichting" type="aaa:leveringsrichtingTA" minOccurs="0"/>
+			<xs:element name="leveringstatus" type="aaa:leveringstatusTA" minOccurs="0"/>
+			<xs:element name="meetmethode" type="aaa:meetmethodeTA" minOccurs="0"/>
+			<xs:element name="productsoort" type="age:productsoort" minOccurs="0"/>
+			<xs:element name="profielcategorie" type="aaa:profielcategorieTA" minOccurs="0"/>
+			<xs:element name="SJVlaagTarief" type="aaa:standaardjaarverbruikTA" minOccurs="0"/>
+			<xs:element name="SJVnormaalTarief" type="aaa:standaardjaarverbruikTA" minOccurs="0"/>
+			<xs:element name="soortAansluiting" type="aaa:soortAansluitingTA" minOccurs="0"/>
+			<xs:element name="startdatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="typeAansluiting" type="aaa:typeAansluitingTA" minOccurs="0"/>
+			<xs:element name="verbruiksegment" type="aaa:verbruiksegment" minOccurs="0"/>
+			<xs:element name="AansluitLocatie" type="tns:AansluitLocatie" minOccurs="0"/>
+			<xs:element name="warmteLevering" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="klantClassificatie" type="tns:string20" minOccurs="0"/>
+			<xs:element name="afrekenDatum" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="beginOpnamePeriode" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="leverancier" type="tns:string35" minOccurs="0"/>
+			<xs:element name="terugLevering" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="onbemeterd" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="afsluitmethode" type="string64" minOccurs="0"/>
+			<xs:element name="telefoonnummerBurenAfsluiting" type="string16" minOccurs="0"/>
+			<xs:element name="huisnummerBurenAfsluiting" type="string8" minOccurs="0"/>
+			<xs:element name="Zegel" type="Zegel" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AansluitingElektriciteit">
+		<xs:complexContent>
+			<xs:extension base="tns:Aansluiting">
+				<xs:sequence>
+					<xs:element name="aantalDummyZekeringen" type="string64" minOccurs="0"/>
+					<xs:element name="materiaalHuisaansluitkast" type="string64" minOccurs="0"/>
+					<xs:element name="typeAansluitkabel" type="string64" minOccurs="0"/>
+					<xs:element name="indicatieDoorgelust" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="zekeringwaardeDoorluszekering" type="string64" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AansluitingGas">
+		<xs:complexContent>
+			<xs:extension base="tns:Aansluiting">
+				<xs:sequence>
+					<xs:element name="huisdrukregelaar" type="Huisdrukregelaar" minOccurs="0"/>
+					<xs:element name="indicatieLosseBklepAanwezig" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="soortMeterbeugel" type="string255" minOccurs="0"/>
+					<xs:element name="indicatieFlexibeleAansluitingMeterbeugel" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="indicatieGeisoleerdeFlexibeleAansluitingMeterbeugel" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="soortHoofdkraanIngaandezijde" type="string64" minOccurs="0"/>
+					<xs:element name="materiaalAansluitleiding" type="string64" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AfrondingMeteropname">
+		<xs:sequence>
+			<xs:element name="afrondingcode" type="string64" minOccurs="0"/>
+			<xs:element name="afrondingissuecode" type="string64" minOccurs="0"/>
+			<xs:element name="afrondingomschrijving" type="string64" minOccurs="0"/>
+			<xs:element name="issueomschrijving" type="string64" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Huisdrukregelaar">
+		<xs:sequence>
+			<xs:element name="indicatieGeintegreerdeBklepAanwezig" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="leverancier" type="string64" minOccurs="0"/>
+			<xs:element name="bouwjaar" type="xs:date" minOccurs="0"/>
+			<xs:element name="type" type="string64" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AansluitLocatie">
+		<xs:complexContent>
+			<xs:extension base="tns:Adres">
+				<xs:sequence>
+					<xs:element name="locatienummer" type="xs:string"/>
+					<xs:element name="indicatieslimuitvoerbaar" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="indicatieservicegroep" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="positiebreedtegraad" type="xs:double" minOccurs="0"/>
+					<xs:element name="positielengtegraad" type="xs:double" minOccurs="0"/>
+					<xs:element name="locatieopmerking" type="tns:string4000" minOccurs="0"/>
+					<xs:element name="datumlaatsteplaatsing" type="xs:dateTime" minOccurs="0"/>
+					<xs:element name="locatieOpmerkingMonteur" type="string255" minOccurs="0"/>
+					<xs:element name="asbestMateriaalAanwezig" type="string64" minOccurs="0"/>
+					<xs:element name="opnamegroep" type="string64" minOccurs="0"/>
+					<xs:element name="Aansluiting" type="Aansluiting" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="AanpassenAansluiting" type="AanpassenAansluitingType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Asbest" type="Asbest" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Adres" abstract="true">
+		<xs:sequence>
+			<xs:element name="adrestoevoeging" type="acm:adrestoevoeging" minOccurs="0"/>
+			<xs:element name="land" type="acm:land" minOccurs="0"/>
+			<xs:element name="plaats" type="acm:woonplaats"/>
+			<xs:element name="straat" type="acm:straatnaam" minOccurs="0"/>
+			<xs:element name="huisnummer" type="acm:huisnummer" minOccurs="0"/>
+			<xs:element name="huisnummertoevoeging" type="acm:huisnummertoevoeging" minOccurs="0"/>
+			<xs:element name="postcode" type="acm:postcode"/>
+			<xs:element name="omschrijving" type="tns:string30" minOccurs="0"/>
+			<xs:element name="omschrijvingNader" type="tns:string200" minOccurs="0"/>
+			<xs:element name="omschrijvingOfficieel" type="tns:string200" minOccurs="0"/>
+			<xs:element name="locatieSoortOmschrijving" type="tns:string30" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AanpassenAansluitingType">
+    	<xs:sequence>
+    		<xs:element name="maatvoering" type="aaa:maatvoering" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="gasmeterbeugel" type="aaa:gasmeterbeugel" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="regelaarBKlep" type="aaa:regelaarBklep" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="hoofdkraan" type="aaa:hoofdkraan" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="flexibeleGasmeterAansluiting" type="aaa:flexibeleGasmeterAansluiting"
+    			maxOccurs="1" minOccurs="0">
+    		</xs:element>
+    		<xs:element name="lodenAansluitleiding" type="aaa:lodenLeidingen"
+    			maxOccurs="1" minOccurs="0">
+    		</xs:element>
+    		<xs:element name="afstandEGmeterGroterDan10m" type="aaa:afstandEG"
+    			maxOccurs="1" minOccurs="0">
+    		</xs:element>
+    		<xs:element name="hoofdzekering" type="aaa:hoofdzekering" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="meterboord" type="aaa:meterboord" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="bedradingStedin" type="aaa:bedradingStedin" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="bedradingKlant" type="aaa:bedradingKlant" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="aansluitkastMetaal" type="aaa:aansluitkastMetaal" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="aansluitkastPOS43" type="aaa:aansluitkastPOS43" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="secundairBoilerrelais" type="aaa:secundairBoilerrelais" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="secundairTariefader" type="aaa:secundairTariefader" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="secundairTfOntvanger" type="aaa:secundairTfOntvanger" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="beschikbareRuimte" type="aaa:beschikbareRuimte" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="indirecteAansluitingen" type="aaa:indirecteAansluitingen" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+    
+	<!-- Additional String types -->
+	
+		<!--
+		Make distinction between GasMeter and ElektraMeter. Usually this is done using the
+		xsi:type attribute. This proves difficult for some client applications. Therefore
+		an element of this type is added to the Meter type to make the distinction.
+		This type lists the possible values.
+	 -->
+    <xs:simpleType name="discriminator">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Elektra"/>
+            <xs:enumeration value="Gas"/>
+             <xs:enumeration value="Warmte"/>
+        </xs:restriction>
+    </xs:simpleType>
+	<xs:simpleType name="string3">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string5">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string10">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string20">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string30">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string35">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="35"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string60">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="60"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string64">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="64"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string4000">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="4000"/>
+		</xs:restriction>
+	</xs:simpleType>	
+	<xs:simpleType name="string100">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string200">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="200"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string255">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string300">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="300"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string80">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="80"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string6">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string8">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="8"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string16">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="16"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string70">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="70"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string50">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="50"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="integer6">
+		<xs:restriction base="xs:integer">
+			<xs:totalDigits value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="integer15">
+		<xs:restriction base="xs:integer">
+			<xs:totalDigits value="15"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="integer18">
+		<xs:restriction base="xs:integer">
+			<xs:totalDigits value="18"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

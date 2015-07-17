@@ -1,4 +1,4 @@
-﻿@model dynamic
+﻿@model XsdTransformer.Web.Site.Models.CsvTransformModel
 @{
     Layout = null;
 }
@@ -9,6 +9,36 @@
 </head>
 <body>
     <div>
+        @using (Html.BeginForm("Transform", "Csv", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="form-row">
+                <label for="Files" class="form-col">
+                    Files
+                </label>
+                <div class="form-col">
+                    <input type="file" multiple="multiple" name="Files" id="Files" />
+                </div>
+            </div>
+            <div class="form-row">
+                <label for="XsdFileName" class="form-col">
+                    Xsd file name
+                </label>
+                <div class="form-col">
+                    <input type="text" name="XsdFileName" id="XsdFileName" />
+                </div>
+            </div>
+            <div class="form-row">
+                <label for="XmlFileName" class="form-col">
+                    Xml file name
+                </label>
+                <div class="form-col">
+                    <input type="text" name="XmlFileName" id="XmlFileName" />
+                </div>
+            </div>
+            <div class="form-row">
+                <input type="submit" />
+            </div>
+        }
     </div>
 </body>
 </html>

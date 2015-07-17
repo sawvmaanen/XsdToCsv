@@ -1,7 +1,6 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
-namespace XsdToCsv.Web.Site
+namespace XsdTransformer.Web.Site
 {
     public class BundleConfig
     {

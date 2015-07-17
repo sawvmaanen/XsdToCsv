@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://cdm.stedinmeetbedrijf.nl/attributen/aansluiting/1.0" 
+			xmlns:tns="http://cdm.stedinmeetbedrijf.nl/attributen/aansluiting/1.0"
+			elementFormDefault="qualified">
+    <!--
+    DEFINITION  : De identificerende EAN13 code voor het capaciteitstarief op deze aansluiting. Alle periodieke kosten van de 
+                    netbeheerder voor de aansluiting worden samengenomen in een verbruiks-onafhankelijk, capaciteit gebaseerd
+                    tarief (en afgerekend via de leveranciersnota). Bepaling vindt o.a. plaats op basis van de fysieke capaciteit 
+                    en de wijze van bemeting van de betreffende aansluiting.
+    TYPE        : numeric(13)
+    FORMAT      : Codering (B'con issue HD258):
+                    Pos 1-2: land
+                    Pos 3-7: netbeheerder 
+                    Pos 8: energieproduct
+                    Pos 9-10: capaciteitsklasse
+                    Pos 11: bemeting
+                    Pos 12: niet benoemd
+                    Pos 13: controlegetal
+    -->
+    <!-- @TODO Maybe better to use string : because of possible 0 -->
+    <xs:simpleType name="capaciteitstariefcode">
+        <xs:restriction base="xs:integer">
+            <xs:totalDigits value="13" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="capaciteitstariefcodeTA">
+		<xs:sequence>
+		    <xs:element name="capaciteitstariefcode" type="tns:capaciteitstariefcode" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : EAN (European Article Number). Het unieke identificatienummer van een aansluiting op het elektriciteitsnet of het gasnet. De netbeheerder kent deze code toe aan een aansluiting. Netbeheerders en leveranciers gebruiken de EAN-code in de onderlinge communicatie, bijvoorbeeld als een klant van leverancier wil veranderen of verhuist. Ook maken de netbeheerders, leveranciers en meetbedrijven gebruik van de EAN-code om klantgegevens in geautomatiseerde systemen makkelijk te kunnen vinden. Klanten vinden hun EAN-code op de jaarafrekening. De leverancier kan de EAN-code vinden in het aansluitingenregister, een database die de netbeheerder onderhoudt. Om de privacy van de klant te beschermen, kan de leverancier niet bij alle klantgegevens in het aansluitingenregister. Klanten kunnen hun EAN-code opzoeken via www.eancodeboek.nl
+    TYPE        : numeric(18)
+    FORMAT      : 
+    -->
+    <xs:simpleType name="ean18">
+        <xs:restriction base="xs:double" />
+    </xs:simpleType>
+    <!--
+    DEFINITION  : Aanduiding over het traject waarin de netwerkkosten bij een klant in rekening gebracht worden.
+Het facturatiemodel geeft aan of de nota betreffende de netkosten direct van de netbeheerder naar de klant gaat (netbeheerdersmodel), of de leverancier de nota inclusief incasso risico overneemt (leveranciersmodel) of dat de leverancier slechts als factuuradres van de klant dient (notaverlegging)
+    TYPE        : numeric(3)
+    FORMAT      : 
+    VALUES      :   - 501 (netbeheerdersmodel)
+                    - 502 (notaverlegging)
+                    - 503 (leveranciersmodel)
+    -->
+
+   <xs:simpleType name="facturatiemodel">
+        <xs:restriction base="xs:integer">
+            <xs:enumeration value="501" />
+            <xs:enumeration value="502" />
+            <xs:enumeration value="503" />
+	    </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="facturatiemodelTA">
+		<xs:sequence>
+		    <xs:element name="facturatiemodel" type="tns:facturatiemodel" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : De capaciteitsklasse die de capaciteit aangeeft welke fysiek maximaal op deze aansluiting geleverd kan worden. Voorheen bekend als de doorlaatwaarde van de aansluiting. Dit kenmerk vormt mede de basis voor de financiele verrekening (capaciteitstariefcode).
+    TYPE        : alphanumeric(5)
+    FORMAT      : 
+    VALUES      :   Elektriciteit
+                    - 1x6 (1 x 6 Ampere)
+                    - 1x25 (1 x 25 Ampere)
+                    - 1x35 (1 x 35 Ampere)
+                    - 1x50 (1 x 50 Ampere)
+                    - 1x63 (1 x 63 Ampere)
+                    - 1x80 (1 x 80 Ampere)
+                    - 3x25 (3 x 25 Ampere)
+                    - 3x35 (3 x 35 Ampere)
+                    - 3x50 (3 x 50 Ampere)
+                    - 3x63 (3 x 63 Ampere)
+                    - 3x80 (3 x 80 Ampere)
+                    - OBK (onbekend)
+                    Gas:
+                    - G4 (<= 6 Nm3/uur)
+                    - G6 (> 6 Nm3/uur, <= 10Nm3/uur)
+                    - G10 (> 10 Nm3/uur, <= 16 Nm3/uur)
+                    - G16 (> 16 Nm3/uur, <= 25 Nm3/uur)
+                    - G25 (> 35 Nm3/uur, <= 40 Nm3/uur)
+                    - G40 (> 40 Nm3/uur, <= 65 Nm3/uur)
+                    - G65 (> 65 Nm3/uur, <= 100 Nm3/uur)
+                    - G100 (> 100 Nm3/uur, <= 160 Nm3/uur)
+                    - G160 (> 160 Nm3/uur, <= 250 Nm3/uur)
+                    - G250 (> 250 Nm3/uur, <= 400 Nm3/uur)
+                    - G400 (> 400 Nm3/uur, <= 650 Nm3/uur)
+                    - G650 (> 650 Nm3/uur, <= 1000 Nm3/uur)
+                    - G1000 (> 1000 Nm3/uur, <= 1600 Nm3/uur)
+                    - G1600 (> 1600 Nm3/uur, <= 2500 Nm3/uur)
+                    - G2500 (> 2500 Nm3/uur)
+                    - OBK  (onbekend)
+    -->
+    <xs:simpleType name="fysiekeCapaciteit">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="1x6" />
+            <xs:enumeration value="1x25" />
+            <xs:enumeration value="1x35" />
+            <xs:enumeration value="1x50" />
+            <xs:enumeration value="1x63" />
+            <xs:enumeration value="1x80" />
+            <xs:enumeration value="3x25" />
+            <xs:enumeration value="3x35" />
+            <xs:enumeration value="3x50" />
+            <xs:enumeration value="3x63" />
+            <xs:enumeration value="3x80" />
+            <xs:enumeration value="G4" />
+            <xs:enumeration value="G6" />
+            <xs:enumeration value="G10" />
+            <xs:enumeration value="G16" />
+            <xs:enumeration value="G25" />
+            <xs:enumeration value="G40" />
+            <xs:enumeration value="G65" />
+            <xs:enumeration value="G100" />
+            <xs:enumeration value="G160" />
+            <xs:enumeration value="G250" />
+            <xs:enumeration value="G400" />
+            <xs:enumeration value="G650" />
+            <xs:enumeration value="G1000" />
+            <xs:enumeration value="G1600" />
+            <xs:enumeration value="G2500" />
+    </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="fysiekeCapaciteitTA">
+		<xs:sequence>
+		    <xs:element name="fysiekeCapaciteit" type="tns:fysiekeCapaciteit" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : Het contractueel vastgelegde vermogen dat de aangeslotene redelijkerwijs verwacht maximaal op enig moment van het jaar nodig te hebben op de aansluiting.
+    TYPE        : numeric(8)
+    FORMAT      : 
+    -->
+    <xs:simpleType name="contractcapaciteit">
+        <xs:restriction base="xs:double" />
+    </xs:simpleType>
+    <xs:complexType name="contractcapaciteitTA">
+		<xs:sequence>
+		    <xs:element name="contractcapaciteit" type="tns:contractcapaciteit" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : De technische toestand voor fysieke energieoverdracht op een aansluiting (zie ook statemodel)
+    TYPE        : alphabetic
+    FORMAT      : 
+    VALUES      :   - gesloopt
+                    - in aanleg
+                    - in bedrijf
+                    - uit bedrijf 
+    -->
+    <xs:simpleType name="fysiekeStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="gesloopt" />
+            <xs:enumeration value="in aanleg" />
+            <xs:enumeration value="in bedrijf" />
+            <xs:enumeration value="uit bedrijf " />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="fysiekeStatusTA">
+		<xs:sequence>
+		    <xs:element name="fysiekeStatus" type="tns:fysiekeStatus" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : De richting van de energiestroom van het product op deze aansluiting. Aanduiding of de aansluiting optreedt als consument, producent of beide.
+    TYPE        : 
+    FORMAT      : 
+    VALUES      :   - LVR (Levering(consumptie))
+                    - TLV (Teruglevering (productie))
+                    - CMB (Combinatie)  
+    -->
+    <xs:simpleType name="leveringsrichting">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LVR" />
+            <xs:enumeration value="TLV" />
+            <xs:enumeration value="CMB" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="leveringsrichtingTA">
+		<xs:sequence>
+		    <xs:element name="leveringsrichting" type="tns:leveringsrichting" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : De administratieve status van de energielevering of afname door marktpartijen op een aansluiting  (zie ook statemodel)
+    TYPE        : alphabetic
+    FORMAT      : 
+    VALUES      :   - actief
+                    - inactief 
+    -->
+    <xs:simpleType name="leveringstatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="actief" />
+            <xs:enumeration value="inactief" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="leveringstatusTA">
+		<xs:sequence>
+		    <xs:element name="leveringstatus" type="tns:leveringstatus" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : De administratieve status van de energielevering of afname door marktpartijen op een aansluiting  (zie ook statemodel)
+    TYPE        : alphabetic(3)
+    FORMAT      : 
+    VALUES      :   OBM - Onbemeten
+					JRL - Jaarlijks
+					MND - Maandelijks
+					TMT - Telemetrie
+					NRT - Near Real Time
+					SLM - Slim bemeten
+					AND - Anders bemeten
+					OBK - Onbekend
+    -->
+    <xs:simpleType name="meetmethode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="OBM" />
+            <xs:enumeration value="JRL" />
+            <xs:enumeration value="MND" />
+            <xs:enumeration value="TMT" />
+            <xs:enumeration value="NRT" />
+            <xs:enumeration value="SLM" />
+            <xs:enumeration value="AND" />
+            <xs:enumeration value="OBK" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="meetmethodeTA">
+		<xs:sequence>
+		    <xs:element name="meetmethode" type="tns:meetmethode" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : Het toegewezen verbruiksprofiel of de afnamecategorie van deze aansluiting Ook bekend als de profielcode voor electriciteit en de afnamecategorie voor gas. Toewijzing vindt plaats op basis van tariefcategorie, aansluitwaarde en transportvermogen.
+    TYPE        : 
+    FORMAT      : alphanumeric(3)
+    VALUES      :   - E1A
+                    - E1B
+                    - E1C
+                    - E2A
+                    - E2B
+                    - E3A
+                    - E3B
+                    - E3C
+                    - E3D
+                    - E4A
+                    - G1A
+                    - G2A
+                    - G2C
+                    - GKV
+                    - GGV
+                    - GXX
+                    - OPC
+    -->
+    <xs:simpleType name="profielcategorie">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="E1A" />
+            <xs:enumeration value="E1B" />
+            <xs:enumeration value="E1C" />
+            <xs:enumeration value="E2A" />
+            <xs:enumeration value="E2B" />
+            <xs:enumeration value="E3A" />
+            <xs:enumeration value="E3B" />
+            <xs:enumeration value="E3C" />
+            <xs:enumeration value="E3D" />
+            <xs:enumeration value="E4A" />
+            <xs:enumeration value="G1A" />
+            <xs:enumeration value="G2A" />
+            <xs:enumeration value="G2C" />
+            <xs:enumeration value="GKV" />
+            <xs:enumeration value="GGV" />
+            <xs:enumeration value="GXX" />
+            <xs:enumeration value="OPC" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="profielcategorieTA">
+		<xs:sequence>
+			<xs:element name="profielcategorie" type="tns:profielcategorie" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : De nadere aanduiding voor de classificatie van deze aansluiting. Aanduiding waarmee het 
+                    type aansluiting ter onderscheid nader geclassificeerd kan worden (o.a. ten behoeve van validaties en rapportage).
+    TYPE        : alphabetic(3)
+    FORMAT      : Normale aansluiting:
+                    - GWN
+                    - HFD
+                    - SUB
+                    - VPY
+                    - LDN
+                    - ODN
+                    - OVL
+                    - CAI
+                    - GML
+                    - CTR
+                    - WKK
+                    - TAS
+                    Bijzondere aansluiting:
+                    - KPN
+                    - KPA
+                    - GOS
+                    - RST
+                    - VPF
+                    - VPB
+                    - VGS
+                    - ALC
+                    - CTF
+    -->
+    <xs:simpleType name="soortAansluiting">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="GWN"/>
+            <xs:enumeration value="HFD"/>
+            <xs:enumeration value="SUB"/>
+            <xs:enumeration value="VPY"/>
+            <xs:enumeration value="LDN"/>
+            <xs:enumeration value="ODN"/>
+            <xs:enumeration value="OVL"/>
+            <xs:enumeration value="CAI"/>
+            <xs:enumeration value="GML"/>
+            <xs:enumeration value="CTR"/>
+            <xs:enumeration value="WKK"/>
+            <xs:enumeration value="TAS"/>
+            <xs:enumeration value="KPN"/>
+            <xs:enumeration value="KPA"/>
+            <xs:enumeration value="GOS"/>
+            <xs:enumeration value="RST"/>
+            <xs:enumeration value="VPF"/>
+            <xs:enumeration value="VPB"/>
+            <xs:enumeration value="VGS"/>
+            <xs:enumeration value="ALC"/>
+            <xs:enumeration value="CTF"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="soortAansluitingTA">
+		<xs:sequence>
+			<xs:element name="soortAansluiting" type="tns:soortAansluiting"  minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : Het verwachte jaarverbruik op de aansluiting.
+    TYPE        : numeric(8)
+    FORMAT      : 
+    -->
+    <xs:simpleType name="standaardjaarverbruik">
+        <xs:restriction base="xs:double" />
+    </xs:simpleType>
+    <xs:complexType name="standaardjaarverbruikTA">
+		<xs:sequence>
+		    <xs:element name="standaardjaarverbruik" type="tns:standaardjaarverbruik" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : De functie die deze aansluiting vervult in het netgebied c.q. vrije marktspel. Aanduiding waarmee de functie van een 
+                aansluiting nader aangegeven kan worden (o.a. ten behoeve van validaties en rapportage).
+    TYPE        : alphabetic(3)
+    FORMAT      : 
+    VALUES      :   - NRM (Normale aansluiting)
+                    - BYZ (Bijzondere aansluitingWaarden) 
+    -->
+    <xs:simpleType name="typeAansluiting">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NRM"/>
+            <xs:enumeration value="BYZ"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="typeAansluitingTA">
+		<xs:sequence>
+		    <xs:element name="typeAansluiting" type="tns:typeAansluiting" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		    <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+    </xs:complexType>
+    <!--
+    DEFINITION  : Het verbruiksegment dat door de netbeheerder aan deze aansluiting is toegekend.
+    TYPE        : alphabetic(3)
+    FORMAT      : 
+    VALUES      :   - KVB (kleinverbruik)
+                    - GVB (grootverbruik)
+    -->
+    <xs:simpleType name="verbruiksegment">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="KVB"/>
+            <xs:enumeration value="GVB"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="maatvoering">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting maatvoering aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="G_MV_1P_G04_H000_D0075"/>
+	     <xs:enumeration value="G_MV_1P_G04_H000_D0100"/>
+	     <xs:enumeration value="G_MV_1P_G04_H000_D0000"/>
+	     <xs:enumeration value="G_MV_1P_G06_H000_D0100"/>
+	     <xs:enumeration value="G_MV_1P_G06_H000_D0000"/>
+	     <xs:enumeration value="G_MV_1P_G10_H000_D0100"/>
+	     <xs:enumeration value="G_MV_1P_G10_H000_D0150"/>
+	     <xs:enumeration value="G_MV_1P_G16_H000_D0100"/>
+	     <xs:enumeration value="G_MV_1P_G16_H000_D0110"/>
+	     <xs:enumeration value="G_MV_1P_G16_H000_D0150"/>
+	     <xs:enumeration value="G_MV_1P_G25_H000_D0150"/>
+	     <xs:enumeration value="G_MV_1P_G25_H000_D0200"/>
+	     <xs:enumeration value="G_MV_2P_G04_H250_D0075"/>
+	     <xs:enumeration value="G_MV_2P_G04_H250_D0100"/>
+	     <xs:enumeration value="G_MV_2P_G06_H220_D0100"/>
+	     <xs:enumeration value="G_MV_2P_G06_H250_D0075"/>
+	     <xs:enumeration value="G_MV_2P_G06_H250_D0100"/>
+	     <xs:enumeration value="G_MV_2P_G10_H280_D0125"/>
+	     <xs:enumeration value="G_MV_2P_G10_H280_D0150"/>
+	     <xs:enumeration value="G_MV_2P_G10_H250_D0125"/>
+	     <xs:enumeration value="G_MV_2P_G10_H250_D0175"/>
+	     <xs:enumeration value="G_MV_2P_G10_H300_D0200"/>
+	     <xs:enumeration value="G_MV_2P_G16_H280_D0125"/>
+	     <xs:enumeration value="G_MV_2P_G16_H280_D0150"/>
+	     <xs:enumeration value="G_MV_2P_G16_H280_D0175"/>
+	     <xs:enumeration value="G_MV_2P_G16_H300_D0200"/>
+	     <xs:enumeration value="G_MV_2P_G16_H335_D0150"/>
+	     <xs:enumeration value="G_MV_2P_G25_H280_D4000"/>
+	     <xs:enumeration value="G_MV_2P_G25_H335_D0200"/>
+	     <xs:enumeration value="G_MV_2P_G25_H400_D0200"/>
+	     <xs:enumeration value="G_MV_2P_G25_H400_D5000"/>
+	     <xs:enumeration value="G_MV_2P_G25_H500_D0300"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="gasmeterbeugel">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een gas aansluiting beugel aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="G_GMB_GMA_BB_G50"/>
+	     <xs:enumeration value="G_GMB_GMA_BB_K50"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="regelaarBklep">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een gas aansluiting regelaar/B-klep aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="G_RBK_TK_GSVH_30mB"/>
+	     <xs:enumeration value="G_RBK_GRBK_AOV_100mB"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="hoofdkraan">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een gas aansluiting hoofdkraan aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="G_HK_GHKA_IW_DMV_BD"/>
+	     <xs:enumeration value="G_HK_GHKA_IN_DMV_BD"/>
+	     <xs:enumeration value="G_HK_LHK_GKK_EL_DDB"/>
+	     <xs:enumeration value="G_HK_LHK_GKK_EL_DDA"/>
+	     <xs:enumeration value="G_HK_GHK_IGS"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="flexibeleGasmeterAansluiting">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een flexibele gas aansluiting aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="G_FLEX_GMA_IOU_NV"/>
+	     <xs:enumeration value="G_FLEX_GMA_IOU_WV"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="lodenLeidingen">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij en lood gas aansluiting aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="G_LAL_LLA"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="afstandEG">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues over het afstand tussen E- en G meters bij een gas aansluiting aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="G_AFST_EGM_G10m_PP"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="hoofdzekering">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting hoofdzekering aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_HZ_NB"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="meterboord">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting meterboord aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_MB_NA_WP"/>
+	     <xs:enumeration value="E_MB_NA_NP"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="bedradingStedin">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting bedrading-Stedin aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_BS_MBEDR_ONG_WW"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	  <xs:simpleType name="bedradingKlant">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting bedrading-Klant aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_BK_MBEDR_ONG_KZ"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="aansluitkastMetaal">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting aansluitkast aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_ASK_M_MBEDR_ONG_NW"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	  <xs:simpleType name="aansluitkastPOS43">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting aansluitkast aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_ASK_POS43"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="secundairBoilerrelais">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting secundair aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_SEC_BR_A"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	  <xs:simpleType name="secundairTariefader">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting secundair aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_SEC_TRF_A"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	  <xs:simpleType name="secundairTfOntvanger">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues bij een elektra aansluiting secundair aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_SEC_TFO_A"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="beschikbareRuimte">
+	   <xs:annotation>
+	     <xs:documentation>Vrije ruimte (niet in meterkast) aan voorzijde kl 60 cm en/of zijkanten kl 15 cm, slimme meter WEL te plaatsen.</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="G_BWR_K60cm_K15cm_MWP"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="indirecteAansluitingen">
+	   <xs:annotation>
+	     <xs:documentation>Aansluiting is indirect (zowel directe kWh-meters met stroomtrafo's als indirecte kWh-meters)</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="E_IDA_A_IND"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <!--Todo Hernoemen naar installatieGegevens? -->
+	 <xs:simpleType name="asset">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van asset gegevens issues bij een aansluiting aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="Datakwaliteit asset gegevens onvolledig"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+	 <xs:simpleType name="storingenAgvWerkzaamheden">
+	   <xs:annotation>
+	     <xs:documentation>Sub-categorieen van technische issues over storingen a.g.v. een aansluiting aanpassing</xs:documentation>
+	   </xs:annotation>
+	   <xs:restriction base="xs:string">
+	     <xs:enumeration value="Als gevolg van werkzaamheden zullen extra storingen ontstaan"/>
+	   </xs:restriction>
+	 </xs:simpleType>
+</xs:schema>

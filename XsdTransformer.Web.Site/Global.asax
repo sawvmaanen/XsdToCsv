@@ -1,1 +1,2 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="XsdToCsv.Web.Site.MvcApplication" Language="C#" %>
+﻿<%@ Application CodeBehind="Global.asax.cs" Inherits="XsdTransformer.Web.Site.MvcApplication"
+    Language="C#" %>

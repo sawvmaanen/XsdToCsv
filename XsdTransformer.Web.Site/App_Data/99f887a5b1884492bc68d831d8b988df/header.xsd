@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 rel. 3 sp1 (http://www.altova.com) by ENECO B.V. (ENECO B.V.) -->
+<!-- $Rev: 17561 $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://cdm.stedin.net/communicatie/typen/algemeen/header/1.0" targetNamespace="http://cdm.stedin.net/communicatie/typen/algemeen/header/1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="header">
+		<xs:sequence>
+			<xs:element name="businessProcessId">
+				<xs:annotation>
+					<xs:documentation>
+						Id van het businessproces waaruit de serivce is
+						aangeroepen. Blijft in alle schakels in het
+						service landschap gelijk. (b.v. iProcess
+						CaseID). Wanneer niet beschikbaar kan dit ook
+						een guid zijn.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="256" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="businessreferentie" type="xs:string"
+				minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Voor de gebruiker herkenbare referentie naar het
+						object waarop de aanroep betrekking heeft. (b.v.
+						EANCode, Klantnummer enz.)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="parentId" type="guid">
+				<xs:annotation>
+					<xs:documentation>
+						BerichtId van het process 1 niveau hoger. Dit
+						moet een guid zijn.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="berichtId" type="guid">
+				<xs:annotation>
+					<xs:documentation>
+						Id van het huidige process/interactiepatroon.
+						Dit moet een guid zijn.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="aanroepDatumTijd" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>
+						DatumTijd van de eerste aanroep richting het
+						service landschap voor deze interactie.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="afzender" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>
+						Naam van het systeem waaruit de eerste aanroep
+						kwam
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="gebruikerId" type="xs:string"
+				minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Id van de gebruiker die de interactie
+						geïnitieerd heeft. (Kan ook een systeemaccount
+						zijn)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="gebruikersNaam" type="xs:string"
+				minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Naam van de gebruiker die de interactie
+						geïnitieerd heeft.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="guid">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

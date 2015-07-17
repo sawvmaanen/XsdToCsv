@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 rel. 3 sp1 (http://www.altova.com) by ENECO B.V. (ENECO B.V.) -->
+<!-- $Rev: 17300 $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://cdm.stedin.net/structuren/resultaat/1" targetNamespace="http://cdm.stedin.net/structuren/resultaat/1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="resultaat">
+		<xs:annotation>
+			<xs:documentation>het resultaat van een service</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="code" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>een numeriek code die het resultaat van de service aangeeft. Een 0 betekent dat de service succesvol is uitgevoerd</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="meldingen" type="meldingen" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>eventuele meldingen die het resultaat verduidelijken voor een eindgebruiker</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="meldingen">
+		<xs:annotation>
+			<xs:documentation>optionele meldingen</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="melding" type="melding" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="melding">
+		<xs:annotation>
+			<xs:documentation>melding</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="code" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>melding code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="omschrijving" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>melding omschrijving</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

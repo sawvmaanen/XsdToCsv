@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://cdm.stedinmeetbedrijf.nl/attributen/meter/1.0" 
+			xmlns:tns="http://cdm.stedinmeetbedrijf.nl/attributen/meter/1.0"
+			elementFormDefault="qualified">
+    <!--
+    DEFINITION  : Indicatie die aangeeft hoe de stand is verkregen.
+    TYPE        : alphabetic
+    FORMAT      : 
+    VALUES      :   - berekend geschat
+                    - berekend geschat door MV
+                    - berekend geschat door NB
+                    - beste inzicht stand
+                    - fysieke opname
+                    - fysieke opname door MV
+                    - klantopname
+                    - opgenomen door NB
+                    - overeengekomen stand
+                    - stand slimme meter
+    -->
+    <xs:simpleType name="herkomstindicatie">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="berekend geschat"/>
+            <xs:enumeration value="berekend geschat door MV"/>
+            <xs:enumeration value="berekend geschat door NB"/>
+            <xs:enumeration value="beste inzicht stand"/>
+            <xs:enumeration value="fysieke opname"/>
+            <xs:enumeration value="fysieke opname door MV"/>
+            <xs:enumeration value="klantopname"/>
+            <xs:enumeration value="opgenomen door NB"/>
+            <xs:enumeration value="overeengekomen stand"/>
+            <xs:enumeration value="stand slimme meter"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--
+    DEFINITION  : De meetrichting van het telwerk.
+    TYPE        : alphabetic(3)
+    FORMAT      :   - LVR (levering)
+                    - TLV (teruglevering) 
+    -->
+    <xs:simpleType name="meetrichting">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LVR"/>
+            <xs:enumeration value="TLV"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--
+    DEFINITION  : Het voor de netbeheerder identificerende meternummer van de meter op een kleinverbruik aansuiting.
+    TYPE        : alphanumeric(70)
+    FORMAT      : 
+    -->
+    <xs:simpleType name="meternummer">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="70"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--
+    DEFINITION  : De status waarin de slimme meter zich bevindt. (zie statemodel)
+    TYPE        : alphabetic(3)
+    FORMAT      : 
+    VALUES      :   - AAN
+                    - DIM
+                    - ERR
+                    - UIT
+    -->
+    <xs:simpleType name="meterstatus">
+        <xs:restriction base="xs:string">
+       	    <xs:enumeration value="AAN"/>
+       	    <xs:enumeration value="DIM"/>
+       	    <xs:enumeration value="ERR"/>
+       	    <xs:enumeration value="UIT"/>
+		</xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="meterstatusTA">
+	    	<xs:sequence>
+    			<xs:element name="meterstatus" type="tns:meterstatus" minOccurs="1" maxOccurs="1"/>
+	             <xs:element name="startDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+	             <xs:element name="eindDatum" type="xs:date" minOccurs="1" maxOccurs="1"/>
+	    	</xs:sequence>
+   </xs:complexType>
+    <!--
+    DEFINITION  : De versie van de NTA die door de meter wordt ondersteund.
+    TYPE        : alphanumeric(20)
+    FORMAT      : 
+    -->
+    <xs:simpleType name="NTAversie">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--
+    DEFINITION  : Vastgestelde stand die daadwerkelijk is afgelezen of berekend/geschat.
+    TYPE        : numeric(38,3)
+    FORMAT      : [0-9]{1,38}\.[0-9]{0,3}
+    -->
+    <xs:simpleType name="stand">
+        <xs:restriction base="xs:double">
+        	<xs:pattern value="[0-9]{0,38}\.{0,1}[0-9]{0,3}" />
+         </xs:restriction>
+    </xs:simpleType>
+    <!--
+    DEFINITION  : De tariefzone waarvoor de gemeten hoeveelheid van het betreffende telwerk geldt.
+    TYPE        : alphanumeric
+    FORMAT      : 
+    VALUES      :   - laag (tussen 21:00 en 7:00 of 23:00 en 7:00)
+                    - normaal (tussen 7:00 en 21:00 of 7:00 en 23:00)
+                    - totaal (Amsterdam specifiek)
+    -->
+    <xs:simpleType name="tariefzone">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="laag"/>
+            <xs:enumeration value="normaal"/>
+            <xs:enumeration value="totaal"/>
+        </xs:restriction>
+    </xs:simpleType> 
+    <!--
+    DEFINITION  : Identificatie van een telwerk volgens OBIS codering (IEC 62056-61).
+    TYPE        : alphanumeric(5)
+    FORMAT      : Slimme meters:
+                    - 1.8.0 (Levering Totaal Wh)
+                    - 1.8.1 ( Levering Laag kWh)
+                    - 1.8.2 (Levering Hoog kWh)
+                    - 2.8.0 (Teruglevering Totaal Wh)
+                    - 2.8.1 (Teruglevering Laag kWh)
+                    - 2.8.2 (Teruglevering Hoog kWh)
+                    Niet slimme meters:
+                    - [1..9]
+    -->
+    <xs:simpleType name="telwerkidentificatie">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--
+    DEFINITION  : Aanduiding voor het type meter.
+					Dit attribuut registreert of het een conventionele dan wel een van afstand uitleesbare meter betreft en of deze laatste schakelbaar is.
+    TYPE        : alphabetic(3)
+	FORMAT		: 
+	VALUES		:	- CVN (Conventioneel)
+					- DUN (van afstand uitleesbaar en schakelbaar)
+					- DUS (van afstand uitleesbaar maar niet schakelbaar)
+    -->
+    <xs:simpleType name="typemeter">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CVN"/>
+            <xs:enumeration value="DUN"/>
+            <xs:enumeration value="DUS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--
+    DEFINITION  : De factor waarmee het getal van het telwerk vermenigvuldigd moet worden om de juiste meetwaarde voor de 
+                    gedefinieerde meeteenheid te verkrijgen.
+    TYPE        : string(8)
+    FORMAT      : [0-9]{3}\.[0-9]{4}
+    VALUES:     [000.0000 .. 999.9999]
+    -->
+    <!-- @TODO maybe number -->
+    <xs:simpleType name="vermenigvuldigingsfactor">
+        <xs:restriction base="xs:double">
+        	<xs:pattern value="[0-9]{3}\.[0-9]{4}" />
+         </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
