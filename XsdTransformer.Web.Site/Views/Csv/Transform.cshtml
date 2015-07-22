@@ -1,24 +1,24 @@
 ﻿@model XsdTransformer.Web.Site.Models.CsvTransformViewModel
-@{
-    Layout = null;
-}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-    <div>
-        <div class="form-row">
-            <div class="form-col">
-                @Html.TextAreaFor(x => x.Csv, new { rows = 60, cols = 200, wrap = "off" })
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-col">
-                @Html.TextAreaFor(x => x.ValidationResult, new { rows = 10, cols = 200, wrap = "off" })
-            </div>
+<div id="transform" class="form">
+    <div class="form-row">
+        <div class="form-val">
+            <span></span>
         </div>
     </div>
-</body>
-</html>
+    <div class="form-row">
+        <div class="form-lbl">
+            @Html.LabelFor(x => x.Csv)
+        </div>
+        <div class="form-val">
+            @Html.TextAreaFor(x => x.Csv, new { wrap = "off" })
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-lbl">
+            @Html.LabelFor(x => x.ValidationResult)
+        </div>
+        <div class="form-val">
+            @Html.TextAreaFor(x => x.ValidationResult, new { rows = 10, cols = 200, wrap = "off" })
+        </div>
+    </div>
+</div>

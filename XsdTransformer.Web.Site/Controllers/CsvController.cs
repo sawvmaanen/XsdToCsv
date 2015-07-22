@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.Xml.Schema;
-using WebGrease.Css.Extensions;
 using XsdTransformer.Core;
 using XsdTransformer.Web.Site.Models;
 
@@ -28,30 +28,43 @@ namespace XsdTransformer.Web.Site.Controllers
 
         public ActionResult Transform(CsvTransformModel model)
         {
-            var folder = GetTransformHash(model);
+            var result = new CsvTransformViewModel();
 
-            if (string.IsNullOrWhiteSpace(model.Guid))
+            try
             {
-                var path = EnsureEmptyFolder(folder);
+                var folder = GetTransformHash(model);
 
-                SaveFiles(model, path);
+                if (string.IsNullOrWhiteSpace(model.Guid))
+                {
+                    var path = EnsureEmptyFolder(folder);
+                    SaveFiles(model, path);
+                }
+
+                var xsdPath = GetFolderPath(folder + "\\" + model.XsdFileName);
+                var xmlPath = GetFolderPath(folder + "\\" + model.XmlFileName);
+                var document = _loader.Load(xsdPath, xmlPath);
+                var validationResult = _loader.GetValidationResult();
+
+                Cleanup(folder);
+                result.ValidationResult = validationResult.Aggregate("", (c, n) => string.Format("{0}\n{1}", c, n));
+
+                if (_loader.GetValidationResult().All(x => x.Key != XmlSeverityType.Error))
+                    result.Csv = _transformer.TransformXml(document);
+            }
+            catch (Exception ex)
+            {
+                result.ValidationResult = ex.ToString();
             }
 
-            var oldCurrentDir = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(GetFolderPath(folder));
-
-            var result = new CsvTransformViewModel();
-            var document = _loader.Load(model.XsdFileName, model.XmlFileName);
-            var validationResult = _loader.GetValidationResult();
-
-            Directory.SetCurrentDirectory(oldCurrentDir);
-
-            result.ValidationResult = validationResult.Aggregate("", (c, n) => string.Format("{0}\n{1}", c, n));
-
-            if (_loader.GetValidationResult().All(x => x.Key != XmlSeverityType.Error))
-                result.Csv = _transformer.TransformXml(document);
-
             return View(result);
+        }
+
+        private void Cleanup(string folder)
+        {
+            var path = GetFolderPath(folder);
+
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
         }
 
         private string GetTransformHash(CsvTransformModel model)
@@ -61,7 +74,19 @@ namespace XsdTransformer.Web.Site.Controllers
 
         private void SaveFiles(CsvTransformModel model, string path)
         {
-            model.Files.ForEach(x => x.SaveAs(Path.Combine(path, x.FileName)));
+            foreach (var file in model.Files)
+            {
+                using (var sr = new StreamReader(file.InputStream))
+                {
+                    var content = sr.ReadToEnd();
+
+                    // Set any import file references within the XSD to newly created path.
+                    content = Regex.Replace(content, "schemaLocation=\"(.+)?\"", string.Format("schemaLocation=\"file:///{0}/$1\"", path.Replace("\\", "/")));
+
+                    using (var sw = System.IO.File.CreateText(Path.Combine(path, file.FileName)))
+                        sw.Write(content);
+                }
+            }
         }
 
         private string GetFolderPath(string name)
