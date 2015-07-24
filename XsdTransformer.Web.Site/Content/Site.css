@@ -20,5 +20,28 @@
 .form textarea
 {
     width: 100%;
-    height: 200px;
+    height: 400px;
+}
+
+.form-row
+{
+    height: 30px;
+    width: 100%;
+    clear: both;
+}
+
+.form-row.col-1 .form-col
+{
+    width: 100%;
+    clear: both;
+}
+
+.form-row.col-2 label
+{
+    width: 150px;
+}
+
+.form-row .form-col
+{
+    float: left;
 }

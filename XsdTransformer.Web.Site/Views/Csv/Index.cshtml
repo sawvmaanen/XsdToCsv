@@ -1,30 +1,29 @@
-﻿@using (Html.BeginForm("Transform", "Csv", FormMethod.Post, new { id = "UploadForm", enctype = "multipart/form-data" }))
+﻿@model XsdTransformer.Web.Site.Models.CsvTransformModel
+@using (Html.BeginForm("Index", "Csv", FormMethod.Post, new { id = "UploadForm", enctype = "multipart/form-data", @class = "form" }))
 {
-    <div class="form-row">
-        <label for="Files" class="form-col">
-            Files
-        </label>
+    <div class="form-row col-2">
+        @Html.LabelFor(m => m.Files, new { @class = "form-col" })
         <div class="form-col">
-            <input type="file" multiple="multiple" name="Files" id="Files" />
+            <input type="file" multiple="multiple" name="@Html.NameFor(m => m.Files)" id="@Html.IdFor(m => m.Files)" data-val-required="Please select files to upload." data-val="true" />
+            @Html.ValidationMessageFor(m => m.Files)
+        </div>
+    </div>
+    <div class="form-row col-2">
+        @Html.LabelFor(m => m.XsdFileName, new { @class = "form-col" })
+        <div class="form-col">
+            @Html.TextBoxFor(m => m.XsdFileName)
+            @Html.ValidationMessageFor(m => m.XsdFileName)
+        </div>
+    </div>
+    <div class="form-row col-2">
+        @Html.LabelFor(m => m.XmlFileName, new { @class = "form-col" })
+        <div class="form-col">
+            @Html.TextBoxFor(m => m.XmlFileName)
+            @Html.ValidationMessageFor(m => m.XmlFileName)
         </div>
     </div>
     <div class="form-row">
-        <label for="XsdFileName" class="form-col">
-            Xsd file name
-        </label>
-        <div class="form-col">
-            <input type="text" name="XsdFileName" id="XsdFileName" />
-        </div>
-    </div>
-    <div class="form-row">
-        <label for="XmlFileName" class="form-col">
-            Xml file name
-        </label>
-        <div class="form-col">
-            <input type="text" name="XmlFileName" id="XmlFileName" />
-        </div>
-    </div>
-    <div class="form-row">
-        <input type="submit" />
+        <button type="submit">
+            Transform</button>
     </div>
 }

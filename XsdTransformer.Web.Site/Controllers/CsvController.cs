@@ -23,25 +23,32 @@ namespace XsdTransformer.Web.Site.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            return View(new CsvTransformModel());
         }
 
-        public ActionResult Transform(CsvTransformModel model)
+        [HttpPost]
+        public ActionResult Index(CsvTransformModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var folder = Guid.NewGuid().ToString("N");
+                var path = EnsureEmptyFolder(folder);
+                SaveFiles(model, path);
+
+                return RedirectToAction("Transform", new { folder, model.XsdFileName, model.XmlFileName });
+            }
+
+            return View(model);
+        }
+
+        public ActionResult Transform(string folder, string xsdFileName, string xmlFileName)
         {
             var result = new CsvTransformViewModel();
 
             try
             {
-                var folder = GetTransformHash(model);
-
-                if (string.IsNullOrWhiteSpace(model.Guid))
-                {
-                    var path = EnsureEmptyFolder(folder);
-                    SaveFiles(model, path);
-                }
-
-                var xsdPath = GetFolderPath(folder + "\\" + model.XsdFileName);
-                var xmlPath = GetFolderPath(folder + "\\" + model.XmlFileName);
+                var xsdPath = GetFolderPath(folder + "\\" + xsdFileName);
+                var xmlPath = GetFolderPath(folder + "\\" + xmlFileName);
                 var document = _loader.Load(xsdPath, xmlPath);
                 var validationResult = _loader.GetValidationResult();
 
@@ -59,17 +66,24 @@ namespace XsdTransformer.Web.Site.Controllers
             return View(result);
         }
 
+        private void RecursiveDelete(DirectoryInfo baseDir)
+        {
+            if (!baseDir.Exists)
+                return;
+
+            foreach (var dir in baseDir.EnumerateDirectories())
+            {
+                RecursiveDelete(dir);
+            }
+
+            baseDir.Delete(true);
+        }
+
         private void Cleanup(string folder)
         {
             var path = GetFolderPath(folder);
 
-            if (Directory.Exists(path))
-                Directory.Delete(path, true);
-        }
-
-        private string GetTransformHash(CsvTransformModel model)
-        {
-            return model.Guid ?? Guid.NewGuid().ToString("N");
+            RecursiveDelete(new DirectoryInfo(path));
         }
 
         private void SaveFiles(CsvTransformModel model, string path)

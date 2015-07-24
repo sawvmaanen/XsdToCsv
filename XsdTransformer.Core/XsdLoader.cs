@@ -34,11 +34,12 @@ namespace XsdTransformer.Core
             settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
             settings.ValidationEventHandler += ValidationEventHandler;
 
-            var reader = XmlReader.Create(xmlPath, settings);
-            var document = XDocument.Load(reader, LoadOptions.SetBaseUri | LoadOptions.SetLineInfo);
-            document.Validate(settings.Schemas, ValidationEventHandler, true);
-
-            return document;
+            using (var reader = XmlReader.Create(xmlPath, settings))
+            {
+                var document = XDocument.Load(reader, LoadOptions.SetBaseUri | LoadOptions.SetLineInfo);
+                document.Validate(settings.Schemas, ValidationEventHandler, true);
+                return document;
+            }
         }
 
         public List<KeyValuePair<XmlSeverityType, string>> GetValidationResult()

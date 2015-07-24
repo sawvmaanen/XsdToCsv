@@ -16,7 +16,7 @@ namespace XsdTransformer.Core
 
         public string TransformXml(XDocument document)
         {
-            return _lineBuidler.BuildHeader() + TransformElement(0, document.Root);
+            return (_lineBuidler.BuildHeader() + TransformElement(0, document.Root)).Trim();
         }
 
         private string TransformElement(int level, XElement element)

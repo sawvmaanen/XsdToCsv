@@ -1,24 +1,18 @@
 ﻿@model XsdTransformer.Web.Site.Models.CsvTransformViewModel
 <div id="transform" class="form">
-    <div class="form-row">
-        <div class="form-val">
-            <span></span>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-lbl">
-            @Html.LabelFor(x => x.Csv)
-        </div>
-        <div class="form-val">
+    <div class="form-row col-1">
+        @Html.LabelFor(x => x.Csv, new { @class = "form-col" })
+        <div class="form-col">
             @Html.TextAreaFor(x => x.Csv, new { wrap = "off" })
         </div>
     </div>
-    <div class="form-row">
-        <div class="form-lbl">
-            @Html.LabelFor(x => x.ValidationResult)
+    @if (!string.IsNullOrWhiteSpace(Model.ValidationResult))
+    {
+        <div class="form-row col-1">
+            @Html.LabelFor(x => x.ValidationResult, new { @class = "form-col" })
+            <div class="form-col">
+                @Html.TextAreaFor(x => x.ValidationResult, new { rows = 10, wrap = "off" })
+            </div>
         </div>
-        <div class="form-val">
-            @Html.TextAreaFor(x => x.ValidationResult, new { rows = 10, cols = 200, wrap = "off" })
-        </div>
-    </div>
+    }
 </div>
